@@ -6,6 +6,25 @@
 
 // must be run from within DokuWiki
 if (!defined('DOKU_INC')) die();
+
+// Get namespace name
+function findStartPage($id)
+{
+    global $conf;
+    $ns = getNS($id);
+    while (!empty($ns)) {
+        if (page_exists($ns.':'.$conf['start'])) {
+            return $ns.':'.$conf['start'];
+        } else {
+            $ns = getNS($ns);
+        }
+    }
+    if (page_exists($conf['start'])) {
+        return $conf['start'];
+    } else {
+        return '';
+    }
+}
 ?>
 
 <!-- ********** HEADER ********** -->
@@ -26,12 +45,13 @@ if (!defined('DOKU_INC')) die();
                 ':wiki:logo.png', ':logo.png',
                 'images/logo.svg', 'images/logo.png'
             ], false, $logoSize);
+	    $startPage = findStartPage($ID);
 
             // display logo and wiki title in a link to the home page
             tpl_link(
-                wl(),
+                wl($startPage),
                 '<img src="' . $logo . '" ' . ($logoSize ? $logoSize[3] : '') . ' alt="" />' .
-                '<span>' . $conf['title'] . '</span>',
+                '<span>' . p_get_metadata($startPage, 'title') . '</span>',
                 'accesskey="h" title="' . tpl_getLang('home') . ' [h]"'
             );
             ?></h1>

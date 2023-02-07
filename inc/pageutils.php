@@ -102,6 +102,10 @@ function getID($param = 'id', $clean = true)
             }
             send_redirect(wl($id, $urlParameters, true, '&'));
         }
+    } else {
+        if($id !== '' && !page_exists($id) && is_dir(dirname(wikiFN("$id:dummy")))){
+            send_redirect(wl("$id:", $urlParameters, true, '&'));
+        }
     }
     if ($clean) $id = cleanID($id);
     if ($id === '' && $param == 'id') $id = $conf['start'];
